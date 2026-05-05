@@ -1,0 +1,40 @@
+import { User } from "../models/user.model.js";
+import { asyncHandler} from "../utils/asyncHandler.js";
+import {ApiError} from "../utils/ApiError.js"
+import {ApiResponse} from "../utils/ApiResponse.js"
+
+const registerUser = asyncHandler(async (req, res) => {
+    const {username, email, password, role} = req.body;
+    
+    if([username, email, password, role].some((filed) => filed.trim() === "")){ // check empty
+        throw new ApiError(400, "All filed required")
+    }
+
+    const existsUser = await User.findOne({$or: [{username}, {email}]}); // check !already exists
+
+    if(existsUser){
+        throw new ApiError(400, "user already exists")
+    }
+
+    const user = await User.create({
+        username,
+        email,
+        password,
+        role: role || "employee"
+    })
+
+    if(!user){
+        throw new ApiError(401, "User not creatred")
+    }
+
+
+    const createdUser = await User.findById(user._id).select("-password -refreshToken")
+
+    return res
+    .status(201)
+    .json(new ApiResponse(201, createdUser, "User registered successfully"))
+})
+
+
+
+export {registerUser}
