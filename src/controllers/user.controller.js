@@ -27,8 +27,8 @@ const genrateAccessAndRefreshToken = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
     const {username, email, password, role} = req.body;
     
-    if([username, email, password, role].some((filed) => filed.trim() === "")){ // check empty
-        throw new ApiError(400, "All filed required")
+    if ([username, email, password].some(field => !field || field.trim() === "")) {
+    throw new ApiError(400, "All fields are required");
     }
 
     const existsUser = await User.findOne({$or: [{username}, {email}]}); // check !already exists
@@ -224,5 +224,61 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 })
 
+const getCurrentEmployee = asyncHandler(async (req, res) => {
+    if(!req.user?._id){
+        throw new ApiError(401, "Unauthorized user")
+    }
 
-export {registerUser, loginUser, logoutUser, changePassword, changeUserProfile, refreshAccessToken}
+    const user = await User.findById(req.user?._id).select("-password -refreshToken")
+
+    if(!user){
+        throw new ApiError(400, "User not found ")
+    }
+
+
+    if(user.role !== "employee"){
+        throw new ApiError(403, "Forbidden: Employees only")
+    }
+
+    return res
+    .status(200)
+    .json(new ApiError(200, user, "Employee profile fetch successfully"))
+
+})
+
+const getAllEmployee = asyncHandler(async (req, res) => {
+
+
+    if (!req.user?._id) {
+        throw new ApiError(401, "Unauthorized user");
+    }
+
+    if (req.user.role !== "admin") {
+        throw new ApiError(403, "Only admin can access");
+    }
+
+
+    const employees = await User.find({ role: "employee" })
+        .select("-password -refreshToken");
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            { employees },
+            "Employees fetched successfully"
+        )
+    );
+});
+
+
+
+export {
+    registerUser, 
+    loginUser, 
+    logoutUser, 
+    changePassword, 
+    changeUserProfile, 
+    refreshAccessToken, 
+    getCurrentEmployee, 
+    getAllEmployee
+}
