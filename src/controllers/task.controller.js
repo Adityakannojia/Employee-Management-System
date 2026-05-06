@@ -20,9 +20,14 @@ const createTask = asyncHandler(async (req, res) => {
         throw new ApiError(400, "All fields are required");
     }
 
+    if (new Date(startDate) > new Date(dueDate)) {
+        throw new ApiError(400, "Start date cannot be greater than due date");
+    }
+
     const existsTask = await Task.findOne({
         title,
-        assignedTo
+        assignedTo,
+        startDate
     });  // already exists
 
     if(existsTask){
@@ -41,12 +46,13 @@ const createTask = asyncHandler(async (req, res) => {
         description,
         assignedTo,
         startDate,
-        dueDate
+        dueDate,
+        status: "pending"
     })
 
     return res
     .status(200)
-    .json(new ApiResponse(200, createTask, "Task assigned successfully"))
+    .json(new ApiResponse(201, createdTask, "Task assigned successfully"))
 })
 
 
