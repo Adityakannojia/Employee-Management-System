@@ -36,9 +36,11 @@ app.post("/test", (req, res) => {
 import userRouter from "./routes/user.route.js"
 import taskRouter from "./routes/task.route.js"
 import leaveRouter from "./routes/leave.route.js"
+import worklogRouter from "./routes/worklog.route.js"
 
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/tasks", taskRouter)
 app.use("/api/leave", leaveRouter)
+app.use("/api/v1/worklog", worklogRouter)
 
 export { app };

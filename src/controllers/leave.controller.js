@@ -49,7 +49,6 @@ const applyLeave = asyncHandler(async (req, res) => {
         );
 });
 
-
 const getMyLeave = asyncHandler(async (req, res) => {
 
     if(!req.user?._id){
