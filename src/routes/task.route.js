@@ -1,7 +1,20 @@
 import express from "express";
 const router = express.Router();
-import { createTask } from "../controllers/task.controller.js";
+import { createTask, deleteTask, getAllTasks, getMyTasks, updateTaskStatus } from "../controllers/task.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 
-router.route("/task").post(verifyJwt, createTask)
+router.route("/create-task").post(verifyJwt, createTask)
+
+router.route("/my-task").get(verifyJwt, getMyTasks)
+
+router.route("/tasks").get(verifyJwt, getMyTasks)
+
+router.route("/all-tasks").get(verifyJwt, getAllTasks)
+
+router.route("/:taskId/status").patch(verifyJwt, updateTaskStatus)
+
+router.route("/:taskId").delete(verifyJwt, deleteTask)
+
+
+export default router
