@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Task } from "../models/task.model.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { json } from "express";
+
 
 
 const createTask = asyncHandler(async (req, res) => {
@@ -52,7 +52,7 @@ const createTask = asyncHandler(async (req, res) => {
     })
 
     return res
-    .status(200)
+    .status(201)
     .json(new ApiResponse(201, createdTask, "Task assigned successfully"))
 });
 
@@ -172,7 +172,7 @@ const deleteTask = asyncHandler(async(req, res) =>{
     const deletedTask = await Task.findByIdAndDelete(taskId)
 
     if(!deletedTask){
-        throw new ApiError(404, "Something wrong task not deleted")
+        throw new ApiError(404, "Task not found")
     }
 
     return res

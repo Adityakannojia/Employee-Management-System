@@ -16,5 +16,4 @@ router.route("/:taskId/status").patch(verifyJwt, updateTaskStatus)
 
 router.route("/:taskId").delete(verifyJwt, deleteTask)
 
-
 export default router
