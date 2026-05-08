@@ -26,8 +26,8 @@ const createWorkLog = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Task Id is required");
     }
 
-    const taskExists = await Task.findById(taskId)
-    .populate()
+    const taskExists = await Task.findById(taskId);
+
 
     if (!taskExists) {
         throw new ApiError(404, "Task not found");

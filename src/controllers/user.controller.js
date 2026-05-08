@@ -1,30 +1,37 @@
 import { User } from "../models/user.model.js";
-import { asyncHandler} from "../utils/asyncHandler.js";
-import {ApiError} from "../utils/ApiError.js"
-import {ApiResponse} from "../utils/ApiResponse.js"
-import jwt, { decode } from "jsonwebtoken"
-import { userSchema } from "../validations/user.validation.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken";
 
-
+/**
+ * Generates and persists auth tokens for a given user.
+ * - accessToken: short-lived JWT
+ * - refreshToken: long-lived JWT stored in DB
+ */
 const genrateAccessAndRefreshToken = async (userId) => {
-        if(!userId){
-        throw new ApiError(400, "User Id not found")
+    // Basic guard - avoids DB query with undefined/null
+    if (!userId) {
+        throw new ApiError(400, "User Id not found");
     }
 
-    const user = await User.findById(userId)
+    const user = await User.findById(userId);
 
-    if(!user){
-        throw new ApiError(400, "User not found")
+    // User must exist to generate tokens
+    if (!user) {
+        throw new ApiError(400, "User not found");
     }
 
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
-    user.refreshToken = refreshToken
-    await user.save({validateBeforeSave: false })
+    // Store refresh token on the user document so refresh can be validated
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
 
-    return {accessToken, refreshToken}
-}
+    return { accessToken, refreshToken };
+};
+
 
 const registerUser = asyncHandler(async (req, res) => {
     const {username, email, password, role} = req.body;
@@ -174,9 +181,6 @@ const changeUserProfile = asyncHandler(async(req, res) => {
 
     await user.save();
 
-    if(!incomingRefreshToken){
-        throw new ApiError(401, "Unauthorized user")
-    }
     const updatedData = await User.findById(user._id).select("-password -refreshToken")
 
     return res
@@ -244,7 +248,7 @@ const getCurrentEmployee = asyncHandler(async (req, res) => {
 
     return res
     .status(200)
-    .json(new ApiError(200, user, "Employee profile fetch successfully"))
+    .json(new ApiResponse(200, user, "Employee profile fetch successfully"))
 
 })
 
