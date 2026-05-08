@@ -1,10 +1,13 @@
 import express, { Router } from "express";
 import { applyLeave, getAllLeaves, getMyLeave, updateLeaveStatus } from "../controllers/leave.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
+import { leaveValidate } from "../middlewares/leave.middleware.js";
 const router = express.Router();
 
 
-router.route("/").post(verifyJwt, applyLeave)
+
+
+router.route("/").post(verifyJwt, leaveValidate, applyLeave)
 
 router.route("/my").get(verifyJwt, getMyLeave)
 

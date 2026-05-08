@@ -3,8 +3,10 @@ const router = express.Router();
 import { loginUser, logoutUser, registerUser, changePassword, changeUserProfile, refreshAccessToken, getCurrentEmployee, getAllEmployee} from "../controllers/user.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { isAdmin } from "../middlewares/admin.middleware.js";
+import { validateUser } from "../middlewares/user.middleware.js";
 
-router.route("/signup").post(registerUser)
+
+router.route("/signup").post(validateUser, registerUser)
 
 router.route("/login").post(loginUser)
 

@@ -2,9 +2,12 @@ import express from "express";
 const router = express.Router();
 import { createTask, deleteTask, getAllTasks, getMyTasks, updateTaskStatus } from "../controllers/task.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
+import { validateTask } from "../middlewares/task.middleware.js";
 
 
-router.route("/create-task").post(verifyJwt, createTask)
+
+
+router.route("/create-task").post(verifyJwt, validateTask, createTask)
 
 router.route("/my-task").get(verifyJwt, getMyTasks)
 

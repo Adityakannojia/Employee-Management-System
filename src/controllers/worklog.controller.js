@@ -26,7 +26,8 @@ const createWorkLog = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Task Id is required");
     }
 
-    const taskExists = await Task.findById(taskId);
+    const taskExists = await Task.findById(taskId)
+    .populate()
 
     if (!taskExists) {
         throw new ApiError(404, "Task not found");
@@ -116,4 +117,42 @@ const getAllWork = asyncHandler(async (req, res) => {
         );
 });
 
-export {createWorkLog, getMyWork, getAllWork}
+const updateWorklogStatus = asyncHandler(async (req, res) => {
+    if(!req.user?._id){
+        throw new ApiError(401, "Unauthorized user")
+    }
+
+    if(req.user.role !== "admin"){
+        throw new ApiError(403, "Only admin can access this action")
+    }
+
+    const {workId} = req.params;
+    const {status} = req.body
+
+    if(!workId){
+        throw new ApiError(404, "Work Id not found")
+    }
+
+    const allowStatus = ["pending", "approved", "reviewed"]
+
+    if(!allowStatus.includes(status)){
+        throw new ApiError(400, "Invalid status value")
+    }
+
+    const workLog = await Worklog.findById(workId)
+    .populate("employee", "username email")
+
+    if(!workLog){
+        throw new ApiError(404, "Work log not found")
+    }
+
+    workLog.status = status
+    const updatedWorkLog = await workLog.save()
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, updatedWorkLog, "Status updated successfully"))
+    
+})
+
+export {createWorkLog, getMyWork, getAllWork, updateWorklogStatus}

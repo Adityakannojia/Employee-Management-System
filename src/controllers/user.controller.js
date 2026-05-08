@@ -3,6 +3,8 @@ import { asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import jwt, { decode } from "jsonwebtoken"
+import { userSchema } from "../validations/user.validation.js";
+
 
 const genrateAccessAndRefreshToken = async (userId) => {
         if(!userId){
