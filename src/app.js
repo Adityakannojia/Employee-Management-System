@@ -4,7 +4,8 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
 import { fileURLToPath } from "url";
-import helmet from "helmet"
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
 
 
 
@@ -27,7 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(apiLimiter);
 app.use(helmet())
-
+app.use(mongoSanitize())
 
 
 
