@@ -6,7 +6,7 @@ import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
 import { fileURLToPath } from "url";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
-
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 
 const app = express();
@@ -45,5 +45,7 @@ app.use("/api/leave", leaveRouter)
 app.use("/api/v1/worklog", worklogRouter)
 
 
+
+app.use(errorMiddleware)
 
 export { app };
