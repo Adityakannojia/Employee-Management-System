@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
+import morgan from "morgan"
 
 
 const app = express();
@@ -28,7 +29,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(apiLimiter);
 app.use(helmet())
-app.use(mongoSanitize())
+// app.use(
+//    mongoSanitize({
+//       replaceWith: "_"
+//    })
+// );
+app.use(morgan("dev"))
 
 
 
