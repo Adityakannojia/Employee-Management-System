@@ -44,12 +44,5 @@ app.use("/api/leave", leaveRouter)
 app.use("/api/v1/worklog", worklogRouter)
 
 
-app.post("/test", (req, res) => {
-    console.log("IP:", req.ip);
-    res.json({ 
-        message: "server is working",
-        ip: req.ip  // ← add this
-    });
-});
 
 export { app };
