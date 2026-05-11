@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
 import { fileURLToPath } from "url";
+import helmet from "helmet"
 
 
 
@@ -25,11 +26,10 @@ app.use(express.urlencoded({ extended: true , limit: "16kb"}));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(apiLimiter);
+app.use(helmet())
 
 
-app.post("/test", (req, res) => {
-    res.json({ message: "server is working" });
-});
+
 
 
 // routes
@@ -42,5 +42,14 @@ app.use("/api/v1/users", userRouter)
 app.use("/api/v1/tasks", taskRouter)
 app.use("/api/leave", leaveRouter)
 app.use("/api/v1/worklog", worklogRouter)
+
+
+app.post("/test", (req, res) => {
+    console.log("IP:", req.ip);
+    res.json({ 
+        message: "server is working",
+        ip: req.ip  // ← add this
+    });
+});
 
 export { app };

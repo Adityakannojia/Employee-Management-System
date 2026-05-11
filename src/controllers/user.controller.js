@@ -66,6 +66,7 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 const loginUser = asyncHandler(async (req, res) => {
+
     const {username, email, password} = req.body;
 
     if(!(username || email) || !password){
@@ -106,8 +107,6 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async(req, res) => {
     const user = req.user
-
-
 
     await User.findByIdAndUpdate(user.id, {refreshToken: undefined}, {new: true, runValidators: true})  // cleare refreshToken in database
     res.clearCookie("refreshToken")
