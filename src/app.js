@@ -29,14 +29,17 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(apiLimiter);
 app.use(helmet())
-// app.use(
-//    mongoSanitize({
-//       replaceWith: "_"
-//    })
-// );
-app.use(morgan("dev"))
+app.use(
+   mongoSanitize({
+      replaceWith: "_"
+   })
+);
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"))
 
 
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+});
 
 
 // routes

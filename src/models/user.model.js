@@ -27,8 +27,13 @@ const userSchema = new Schema({
     enum: ["admin", "employee"],
     default: "employee"
   },
+  is_active: {
+    type: Boolean,
+    default: true
+  },
   refreshToken:{
-    type: String
+    type: String,
+    select: false
   }
 }, { timestamps: true });
 
@@ -45,8 +50,8 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 userSchema.methods.generateAccessToken = function (){
     return jwt.sign({
         id: this._id,
-        fullname: this.fullname,
-        email: this.email
+        email: this.email,
+        role: this.role
     },
     process.env.ACCESSTOKEN_SECRET,
     {

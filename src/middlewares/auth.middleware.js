@@ -12,7 +12,7 @@ import { User } from "../models/user.model.js";
             req.headers?.authorization?.replace("Bearer ", "");
 
         if (!token) {
-            throw new ApiError(401, "Unauthorized user");
+            throw new ApiError(401, "Unauthorized");
         }
 
         const decoded = jwt.verify(token, process.env.ACCESSTOKEN_SECRET);
@@ -21,7 +21,11 @@ import { User } from "../models/user.model.js";
             .select("-password -refreshToken");
 
         if (!user) {
-            throw new ApiError(401, "Unauthorized user");
+            throw new ApiError(401, "Unauthorized");
+        }
+
+        if (user.is_active === false) {
+            throw new ApiError(403, "Account has been deactivated");
         }
 
         req.user = user;
@@ -29,7 +33,10 @@ import { User } from "../models/user.model.js";
         next();
 
     } catch (err) {
-        throw new ApiError(401, err?.message || "Invalid token");
+        if (err instanceof ApiError) {
+            throw err;
+        }
+        throw new ApiError(401, "Invalid or expired token");
     }
 });
 

@@ -32,9 +32,30 @@ export const userSchema = Joi.object({
             "string.min": "Password must be at least 6 characters",
             "string.max": "Password cannot exceed 20 characters"
         }),
-
-    role: Joi.string()
-        .valid("admin", "employee")
-        .optional()
 });
 
+export const loginSchema = Joi.object({
+    username: Joi.string()
+        .trim()
+        .lowercase()
+        .optional(),
+
+    email: Joi.string()
+        .trim()
+        .lowercase()
+        .email()
+        .optional()
+        .messages({
+            "string.email": "Invalid email format"
+        }),
+
+    password: Joi.string()
+        .required()
+        .messages({
+            "string.empty": "Password is required"
+        }),
+})
+    .or("username", "email")
+    .messages({
+        "object.missing": "Username or email is required"
+    });
